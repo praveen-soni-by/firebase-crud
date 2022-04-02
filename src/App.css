@@ -1,38 +1,60 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+/* FormDemo.css */
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.form .card {
+  max-width: 900px;
+}
+.form .card form {
+  margin-top: 2rem;
+}
+.form .card .field {
+  margin-bottom: 1.5rem;
+}
+@media screen and (max-width: 960px) {
+  .form .card {
+      width: 80%;
   }
 }
+@media screen and (max-width: 640px) {
+  .form .card {
+      width: 100%;
+      min-width: 0;
+  }
+}
+           
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.p-inputtext {
+  padding: 0.55rem 0.75rem !;
+}
+.flex-container{
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: row;
+  padding: 0.2rem;
 }
 
-.App-link {
-  color: #61dafb;
+.ml-1{
+  margin-left: 1rem;
+}
+.table-header{
+  padding: 1rem;
+  margin-right: 1rem;
+  font-size: larger;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.p-button.p-button-icon-only{
+  height:2rem;
+  width:2rem;
+}
+
+.p-card   .p-card-content{
+ padding-top:0rem
+}
+.p-card .p-card-body{
+  padding: 0rem;
+}
+.container{
+  padding:1rem
+
 }
