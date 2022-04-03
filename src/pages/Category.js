@@ -7,19 +7,17 @@ import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Sidebar } from "primereact/sidebar";
 import { Toast } from "primereact/toast";
-import { useEffect, useRef, useState } from "react";
-import {
-  deleteItems,
-  fetchItem,
-  updateItem,
-} from "../firebase/firebaseService";
+import { useEffect, useState } from "react";
+import Constant from "../constants/Constans";
+import useToast from '../hooks/useToast';
+import * as CategoryService from "../services/CategoryService";
+import { removedMsg } from "../utils/Message";
 import AddCategory from "./AddCategory";
 
+
 export default function Category() {
-  const [showMessage, setShowMessage] = useState(false);
-  const [formData, setFormData] = useState({});
   const [categories, setCategories] = useState([]);
-  const toast = useRef(null);
+  const toast = useToast();
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -38,41 +36,61 @@ export default function Category() {
   }, []);
 
   const loadData = async () => {
-    let categories = await fetchItem();
+    let categories = await CategoryService.fetchCategories();
     setCategories(categories);
     setLoading(false);
   };
 
   const deleteRecords = () => {
     const codes = selectedCategories.map((category) => category.code);
-    deleteItems(codes).then(() => {
-      showSuccess("Categories Deleted Successfully");
+    CategoryService.deleteCategories(codes).then(() => {
+      showSuccess(removedMsg("Categories"));
       setSelectedCategories([]);
       loadData();
     });
   };
 
-  const showSuccess = (msg) => {
+  const deleteConfirm = () => {
+    confirmDialog({
+      message: "Do you want to delete this record?",
+      header: "Delete Confirmation",
+      icon: "pi pi-info-circle",
+      acceptClassName: "p-button-danger",
+      accept,
+    });
+  };
+
+  const accept = () => {
+    deleteRecords();
+  };
+
+  const onRowEditComplete = (e) => {
+    let _categories = [...categories];
+    let { newData, index } = e;
+    _categories[index] = newData;
+    CategoryService.updateCategory(newData);
+    setCategories(_categories);
+  };
+
+  const showToast = (msg, severity) => {
     toast.current.show({
-      severity: "success",
-      summary: "Success",
+      severity: severity,
       detail: msg,
       life: 3000,
     });
   };
 
-  const showError = (err) => {
-    toast.current.show({
-      severity: "error",
-      summary: "Error Message",
-      detail: "Message Content",
-      life: 3000,
-    });
+  const showError = (msg) => {
+    showToast(msg, "error");
   };
+
+  const showSuccess = (msg) => {
+    showToast(msg, "success");
+  };
+
   const clearFilter = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-
       name: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
@@ -89,20 +107,14 @@ export default function Category() {
     setFilters(_filters);
     setGlobalFilterValue(value);
   };
-
-  const deleteConfirm = () => {
-    confirmDialog({
-      message: "Do you want to delete this record?",
-      header: "Delete Confirmation",
-      icon: "pi pi-info-circle",
-      acceptClassName: "p-button-danger",
-      accept,
+  const updateCategory = (item) => {
+    let _categories = [...categories];
+    _categories.unshift({
+      ...item,
     });
+    setVisibleSideBar(false);
+    setCategories(_categories);
   };
-  const accept = () => {
-    deleteRecords();
-  };
-
   const renderHeader = () => {
     return (
       <>
@@ -156,14 +168,7 @@ export default function Category() {
       </>
     );
   };
-
-  const onRowEditComplete = (e) => {
-    let _categories = [...categories];
-    let { newData, index } = e;
-    _categories[index] = newData;
-    updateItem(newData);
-    setCategories(_categories);
-  };
+  const header = renderHeader();
 
   const textEditor = (options) => (
     <InputText
@@ -172,16 +177,6 @@ export default function Category() {
       onChange={(e) => options.editorCallback(e.target.value)}
     />
   );
-
-  const updateCategory = (item) => {
-    let _categories = [...categories];
-    _categories.unshift({
-      ...item,
-    });
-    setVisibleSideBar(false);
-    setCategories(_categories);
-  };
-  const header = renderHeader();
 
   return (
     <div className="container">
@@ -206,9 +201,9 @@ export default function Category() {
           paginator
           className="p-datatable-customers"
           header={header}
-          rows={10}
+          rows={Constant.ROW_PER_PAGE}
           paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          rowsPerPageOptions={[10, 25, 50]}
+          rowsPerPageOptions={Constant.ROW_PER_PAGE_OPTIONS}
           dataKey="id"
           rowHover
           selection={selectedCategories}

@@ -1,45 +1,58 @@
 import {
-    addDoc, collection, doc, getDocs, query, updateDoc, where, writeBatch
+  addDoc, getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+  serverTimestamp,
+  orderBy
 } from "firebase/firestore";
+import Utils from "../utils/Utils";
 import { db } from "./firebase";
 
-const CATERORY_DOC = "categories";
-const categoriesRef = collection(db, CATERORY_DOC);
-
-export const fetchItem = async () => {
-  const Categories = [];
-  const categoriesSnapShot = await getDocs(categoriesRef);
-  categoriesSnapShot.docs.map((doc) =>
-    Categories.push({ ...doc.data(), id: doc.id })
-  );
-  return Categories;
+export const fetchItem = async (docRef) => {
+  const docs = [];
+  const docSnapshot = await getDocs(query(docRef, orderBy('createdAt')));
+  docSnapshot.docs.map((doc) => docs.push({ ...doc.data() }));
+  return docs;
 };
 
-export const addItem = async (data) => {
-  return await addDoc(categoriesRef, {
+export const addItem = async (docRef,data) => {
+  return await addDoc(docRef, {
     ...data,
+    id:uuidv4(),
+    createAt:serverTimestamp()
   });
 };
 
-export const updateItem = async (data) => {
-  const docRef = doc(db, CATERORY_DOC, data.id);
+
+export const updateItem = async (docRef,data) => {
   delete data.id;
   return await updateDoc(docRef, {
     ...data,
   });
 };
 
-export const deleteItems = async (data) => {
+export const deleteItems = async (docRef,key,data) => {
   if (data.length > 10) {
-    return sliceIntoChunks(data, 10).map((k) => deleteData(k));
+    return Utils.sliceIntoChunks(data, 10).map((d) => deleteData(docRef,key,d));
   } else {
-    return deleteData(data);
+    return deleteData(docRef,key,data);
   }
 };
 
-const deleteData = async (data) => {
+export const deleteItem = async (docRef,key,data) => {
+  const q = query(docRef, where(key, "in", data));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    doc.ref.delete();
+  });
+};
+
+
+const deleteData = async (docRef,key,data) => {
   let batch = writeBatch(db);
-  const q = query(categoriesRef, where("code", "in", data));
+  const q = query(docRef, where(key, "in", data));
   const querySnapshot = await getDocs(q);
   querySnapshot.docs.forEach((doc) => {
     batch.delete(doc.ref);
@@ -47,21 +60,10 @@ const deleteData = async (data) => {
   return batch.commit();
 };
 
-export const deleteItem = async (data) => {
-  const q = query(categoriesRef, where("code", "in", data));
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    doc.ref.delete();
-  });
-};
-
-function sliceIntoChunks(arr, chunkSize) {
-  const res = [];
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    const chunk = arr.slice(i, i + chunkSize);
-    res.push(chunk);
-  }
-  return res;
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }
 
 export default { updateItem, addItem, fetchItem, deleteItems, deleteItem };
