@@ -8,19 +8,19 @@ import { InputText } from "primereact/inputtext";
 import { Sidebar } from "primereact/sidebar";
 import { Toast } from "primereact/toast";
 import { useEffect, useState } from "react";
-import AddProduct from "../pages/AddProduct";
-import Constant from "../constants/Constans";
-import useToast from '../hooks/useToast';
-import * as ProductService from "../services/ProductService";
-import { removedMsg } from "../utils/Message";
+import Constant from "../../constants/Constans";
+import useToast from '../../hooks/useToast';
+import * as CategoryService from "../../services/CategoryService";
+import { removedMsg } from "../../utils/Message";
+import AddCategory from "./AddCategory";
 
 
 export default function Category() {
-  const [products, setproducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const toast = useToast();
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedproducts, setSelectedproducts] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [visibleSideBar, setVisibleSideBar] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -36,17 +36,16 @@ export default function Category() {
   }, []);
 
   const loadData = async () => {
-    let products = await ProductService.fetchProducts();
-    console.log(products);
-    setproducts(products);
+    let categories = await CategoryService.fetchCategories();
+    setCategories(categories);
     setLoading(false);
   };
 
   const deleteRecords = () => {
-    const codes = selectedproducts.map((category) => category.code);
-    ProductService.deleteProducts(codes).then(() => {
-      showSuccess(removedMsg("products"));
-      setSelectedproducts([]);
+    const codes = selectedCategories.map((category) => category.code);
+    CategoryService.deleteCategories(codes).then(() => {
+      showSuccess(removedMsg("Categories"));
+      setSelectedCategories([]);
       loadData();
     });
   };
@@ -66,11 +65,11 @@ export default function Category() {
   };
 
   const onRowEditComplete = (e) => {
-    let _products = [...products];
+    let _categories = [...categories];
     let { newData, index } = e;
-    _products[index] = newData;
-    ProductService.updateProduct(newData);
-    setproducts(_products);
+    _categories[index] = newData;
+    CategoryService.updateCategory(newData);
+    setCategories(_categories);
   };
 
   const showToast = (msg, severity) => {
@@ -109,18 +108,18 @@ export default function Category() {
     setGlobalFilterValue(value);
   };
   const updateCategory = (item) => {
-    let _products = [...products];
-    _products.unshift({
+    let _categories = [...categories];
+    _categories.unshift({
       ...item,
     });
     setVisibleSideBar(false);
-    setproducts(_products);
+    setCategories(_categories);
   };
   const renderHeader = () => {
     return (
       <>
         <div className="flex-container ">
-          <div className="table-header">products</div>
+          <div className="table-header">Categories</div>
 
           <div
             className="p-input-icon-left  "
@@ -154,7 +153,7 @@ export default function Category() {
               tooltipOptions={{ position: "bottom" }}
             />
 
-            {selectedproducts.length > 0 && (
+            {selectedCategories.length > 0 && (
               <Button
                 type="button"
                 icon="pi pi-trash"
@@ -190,7 +189,7 @@ export default function Category() {
           position="right"
           onHide={() => setVisibleSideBar(false)}
         >
-          <AddProduct
+          <AddCategory
             showSuccess={showSuccess}
             showError={showError}
             updateCategory={updateCategory}
@@ -198,7 +197,7 @@ export default function Category() {
         </Sidebar>
 
         <DataTable
-          value={products}
+          value={categories}
           paginator
           className="p-datatable-customers"
           header={header}
@@ -207,8 +206,8 @@ export default function Category() {
           rowsPerPageOptions={Constant.ROW_PER_PAGE_OPTIONS}
           dataKey="id"
           rowHover
-          selection={selectedproducts}
-          onSelectionChange={(e) => setSelectedproducts(e.value)}
+          selection={selectedCategories}
+          onSelectionChange={(e) => setSelectedCategories(e.value)}
           filters={filters}
           filterDisplay="menu"
           loading={loading}
@@ -231,45 +230,10 @@ export default function Category() {
             filterPlaceholder="Search by name"
             style={{ minWidth: "5rem" }}
           ></Column>
-           <Column
-            field="price"
-            header="Price"
-            sortable
-            editor={(options) => textEditor(options)}
-            style={{ minWidth: "5rem" }}
-          ></Column>
-            <Column
-            field="sellPrice"
-            header="Sell Price"
-            editor={(options) => textEditor(options)}
-            style={{ minWidth: "5rem" }}
-          ></Column>
-             <Column
-            field="category"
-            header="Category"
-            sortable
-            editor={(options) => textEditor(options)}
-            style={{ minWidth: "5rem" }}
-          >
-            
-          </Column>
           <Column
-            field="isAvailable"
-            header="Available"
-            sortable
-            
+            field="code"
             editor={(options) => textEditor(options)}
-            style={{ minWidth: "5rem" }}
-          >
-            
-          </Column>
-
-            <Column
-            field="discount"
-            header="Discount"
-            
-            editor={(options) => textEditor(options)}
-            style={{ minWidth: "5rem" }}
+            header="Code"
           ></Column>
           <Column
             rowEditor

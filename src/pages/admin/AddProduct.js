@@ -1,9 +1,9 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import { addProduct } from "../services/ProductService";
-import FormBuilder from "../utils/FormBuilder";
-import { successMsg } from "../utils/Message";
-import { AddProductValidator } from "../utils/Validators";
+import { addProduct } from "../../services/ProductService";
+import FormBuilder from "../../utils/FormBuilder";
+import { successMsg } from "../../utils/Message";
+import { AddProductValidator } from "../../utils/Validators";
 
 //isAvailable: true,
 //rating:0

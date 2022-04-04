@@ -1,9 +1,9 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import { addCategory } from "../services/CategoryService";
-import FormBuilder from "../utils/FormBuilder";
-import { successMsg } from "../utils/Message";
-import { AddCategoryValidator } from "../utils/Validators";
+import { addCategory } from "../../services/CategoryService";
+import FormBuilder from "../../utils/FormBuilder";
+import { successMsg } from "../../utils/Message";
+import { AddCategoryValidator } from "../../utils/Validators";
 
 const formConfig = [
   {
