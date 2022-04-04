@@ -7,16 +7,17 @@ import { classNames } from "primereact/utils";
 import { useEffect, useState } from "react";
 import { fetchItem } from "../firebase/firebaseService";
 
-const ProdcutSchema = {
+const ProductInitialState = {
   name: "",
   price: null,
   sellPrice: null,
   category: null,
   isAvailable: true,
   discount: null,
+  rating:0
 };
 
-export default function Product() {
+export default function AddProduct() {
   const [categories, setCategories] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const [formData, setFormData] = useState({});
@@ -26,7 +27,7 @@ export default function Product() {
   }, []);
 
   const formik = useFormik({
-    initialValues: ProdcutSchema,
+    initialValues: ProductInitialState,
     validate: (data) => {
       let errors = {};
 

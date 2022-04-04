@@ -21,7 +21,7 @@ export const addItem = async (docRef,data) => {
   return await addDoc(docRef, {
     ...data,
     id:uuidv4(),
-    createAt:serverTimestamp()
+    createdAt:serverTimestamp()
   });
 };
 

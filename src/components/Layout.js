@@ -88,6 +88,7 @@ export default function Layout() {
   };
 
   const renderGridItem = (data) => {
+    let isSoldOut = data.inventoryStatus === "SoldOut" ;
     return (
       <div className="p-col-12 p-md-6 p-lg-3">
         <div className="product-grid-item card">
@@ -96,11 +97,11 @@ export default function Layout() {
               <i className="pi pi-tag product-category-icon"></i>
               <span className="product-category">{data.category}</span>
             </div>
-            <span
-              className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}
+            <div
+              className={`${isSoldOut ? "product-badge soldOut" : '' }`}
             >
-              {data.inventoryStatus}
-            </span>
+              <span>{isSoldOut ? data.inventoryStatus : ''}</span>
+            </div>
           </div>
           <div className="product-grid-item-content">
             <img

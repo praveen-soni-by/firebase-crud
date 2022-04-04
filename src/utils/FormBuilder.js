@@ -27,13 +27,13 @@ export default function FormBuilder({ config, formik }) {
                   value={formik.values[filedDetails.name]}
                   onChange={formik.handleChange}
                   autoFocus={index === 0}
-                  autoCapitalize={true}
+                  autoCapitalize="true"
                   className={classNames({
                     "p-invalid": isFormFieldValid(filedDetails.name),
                   })}
                 />
                 <label
-                  htmlFor="name"
+                  htmlFor={filedDetails.name}
                   className={classNames({
                     "p-error": isFormFieldValid(filedDetails.name),
                   })}

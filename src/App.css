@@ -64,13 +64,25 @@
 }
 
 .p-rating .p-rating-icon.pi-star-fill {
-  color: #FDCC0D;
+  color: #fdcc0d;
 }
 
 .p-rating:hover .p-rating-icon.pi-star-fill:hover {
   color: #f3a310;
 }
 
-.mb-2{
-  margin-bottom:.8rem
+.mb-2 {
+  margin-bottom: 0.8rem;
+}
+
+.soldOut {
+  transform: rotate(35deg);
+  background-color: red;
+  padding: 0.25rem;
+  flex-direction: auto;
+  color: white;
+  font-weight: 600;
+  margin-right: -1rem;
+  top: 0;
+  overflow: hidden;
 }
