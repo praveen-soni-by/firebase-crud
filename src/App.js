@@ -3,10 +3,10 @@ import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.min.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "./App.css";
-import Category from "./pages/admin/Category";
+import ProductList from "./pages/ProductList";
 
 function App() {
-  return <Category/>
+  return <ProductList/>
 }
 
 export default App;
